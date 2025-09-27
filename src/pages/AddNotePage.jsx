@@ -1,8 +1,7 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { addNote } from "../utils/local-data";
 
-function AddNotePage() {
+function AddNotePage({ onAdd }) { 
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const bodyRef = useRef(null);
@@ -10,8 +9,6 @@ function AddNotePage() {
 
   const onSubmit = (e) => {
     e.preventDefault();
-
-    // Validasi sederhana
     if (!title.trim()) {
       alert("Judul catatan tidak boleh kosong");
       return;
@@ -21,16 +18,7 @@ function AddNotePage() {
       return;
     }
 
-    addNote({ title, body });
-    
-    // Reset form setelah submit
-    setTitle("");
-    setBody("");
-    if (bodyRef.current) {
-      bodyRef.current.innerHTML = "";
-    }
-
-    // Kembali ke halaman utama
+    onAdd({ title, body });
     navigate("/");
   };
 
@@ -55,7 +43,7 @@ function AddNotePage() {
         />
         
         <div className="add-new-page__action">
-          <button className="action" type="submit">
+          <button className="action" type="submit" title="Simpan">
             ✔
           </button>
         </div>

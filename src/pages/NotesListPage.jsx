@@ -1,13 +1,20 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { getActiveNotes } from "../utils/local-data";
+import React from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { showFormattedDate } from "../utils";
 
-function NotesListPage() {
-  const [keyword, setKeyword] = useState(""); // 🔍 state keyword pencarian
-  const notes = getActiveNotes();
+function NotesListPage({ notes }) { 
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  const keyword = searchParams.get('keyword') || ''; 
 
-  // filter catatan sesuai keyword
+  const onKeywordChangeHandler = (newKeyword) => {
+    if (newKeyword.trim() === '') {
+        setSearchParams({}); 
+    } else {
+        setSearchParams({ keyword: newKeyword });
+    }
+  };
+
   const filteredNotes = notes.filter(
     (note) =>
       note.title.toLowerCase().includes(keyword.toLowerCase()) ||
@@ -19,12 +26,11 @@ function NotesListPage() {
       <main>
         <h1>Daftar Catatan</h1>
 
-        {/* 🔍 Input pencarian */}
         <input
           type="text"
           placeholder="Cari catatan..."
           value={keyword}
-          onChange={(e) => setKeyword(e.target.value)}
+          onChange={(e) => onKeywordChangeHandler(e.target.value)}
           className="search-bar"
         />
 
@@ -48,9 +54,10 @@ function NotesListPage() {
           )}
         </div>
 
-        {/* Floating Add Button */}
         <div className="homepage__action">
-          <Link to="/notes/new" className="action">＋</Link>
+          <Link to="/notes/new" className="action" title="Tambah Catatan">
+            ＋
+          </Link>
         </div>
       </main>
     </div>

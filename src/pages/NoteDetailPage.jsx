@@ -1,18 +1,12 @@
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import {
-  getNote,
-  deleteNote,
-  archiveNote,
-  unarchiveNote,
-} from "../utils/local-data";
 import { showFormattedDate } from "../utils";
 import parser from "html-react-parser";
 
-function NoteDetailPage() {
+function NoteDetailPage({ notes, onDelete, onArchive }) {
   const { id } = useParams();
   const navigate = useNavigate();
-  const note = getNote(id);
+  const note = notes.find((n) => n.id === id);
 
   if (!note) {
     return (
@@ -22,18 +16,14 @@ function NoteDetailPage() {
     );
   }
 
-  const onDelete = () => {
-    deleteNote(id);
+  const onDeleteHandler = () => {
+    onDelete(id); 
     navigate("/");
   };
 
-  const onArchiveToggle = () => {
-    if (note.archived) {
-      unarchiveNote(id);
-    } else {
-      archiveNote(id);
-    }
-    navigate("/");
+  const onArchiveToggleHandler = () => {
+    onArchive(id, note.archived);
+    navigate(note.archived ? "/" : "/archives"); 
   };
 
   return (
@@ -45,8 +35,10 @@ function NoteDetailPage() {
       <div className="detail-page__body">{parser(note.body)}</div>
 
       <div className="detail-page__action">
-        <button className="action" onClick={onDelete}>🗑</button>
-        <button className="action" onClick={onArchiveToggle}>
+        <button className="action" onClick={onDeleteHandler} title="Hapus Catatan">
+          🗑
+        </button>
+        <button className="action" onClick={onArchiveToggleHandler} title={note.archived ? "Batal Arsip" : "Arsipkan"}>
           {note.archived ? "📂" : "📦"}
         </button>
       </div>

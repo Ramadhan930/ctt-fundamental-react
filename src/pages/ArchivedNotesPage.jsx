@@ -1,14 +1,19 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { getArchivedNotes } from "../utils/local-data";
+import React from "react";
+import { Link, useSearchParams } from "react-router-dom"; 
 import { showFormattedDate } from "../utils";
 import '../styles/style.css';
 
-function ArchivedNotesPage() {
-  const [keyword, setKeyword] = useState(""); // 🔍 state keyword pencarian
-  const notes = getArchivedNotes();
+function ArchivedNotesPage({ notes }) { 
+  const [searchParams, setSearchParams] = useSearchParams(); 
+  const keyword = searchParams.get('keyword') || ''; 
+  const onKeywordChangeHandler = (newKeyword) => {
+    if (newKeyword.trim() === '') {
+        setSearchParams({});
+    } else {
+        setSearchParams({ keyword: newKeyword });
+    }
+  };
 
-  // filter catatan sesuai keyword
   const filteredNotes = notes.filter(
     (note) =>
       note.title.toLowerCase().includes(keyword.toLowerCase()) ||
@@ -19,13 +24,11 @@ function ArchivedNotesPage() {
     <div className="app-container">
       <main>
         <h1>Catatan Terarsip</h1>
-
-        {/* 🔍 Input pencarian */}
         <input
           type="text"
           placeholder="Cari catatan arsip..."
-          value={keyword}
-          onChange={(e) => setKeyword(e.target.value)}
+          value={keyword} 
+          onChange={(e) => onKeywordChangeHandler(e.target.value)} 
           className="search-bar"
         />
 
@@ -49,6 +52,7 @@ function ArchivedNotesPage() {
           )}
         </div>
       </main>
+      
     </div>
   );
 }

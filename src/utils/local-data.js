@@ -39,7 +39,7 @@ function getDefaultNotes() {
 }
 
 // ==== Fungsi Akses Data ====
-function getAllNotes() {
+function getInitialData() {
   return notes;
 }
 
@@ -100,7 +100,7 @@ function editNote({ id, title, body }) {
 loadNotes();
 
 export {
-  getAllNotes,
+  getInitialData,
   getActiveNotes,
   getArchivedNotes,
   getNote,
